@@ -1,0 +1,131 @@
+# =====================================================================
+#  MODO PESADILLA - config.yml
+#  Recargar sin reiniciar: /pesadilla recargar
+#  Otros archivos: mobs.yml (habilidades de cada mob) y
+#  messages.yml (textos).
+# =====================================================================
+
+# Nivel que se usa la primera vez (despues se guarda en data.yml).
+nivel-por-defecto: veterano
+
+# Factor de cada nivel. Escala los multiplicadores y las probabilidades.
+# 0 = apagado (el plugin no hace nada). Puedes anadir niveles propios.
+niveles:
+  apagado: 0.0
+  novato: 0.5
+  medio: 0.85
+  veterano: 1.15
+  pesadilla: 1.8
+
+# Multiplicadores BASE (un mob los usa cuando en mobs.yml pone "vida: true"
+# o "dano: true"). Con factor 1 quedan tal cual; con factor 0 quedan en x1.
+base:
+  vida: 1.5
+  dano: 1.15
+  elite-vida: 2.0
+  elite-dano: 1.3
+
+spawn:
+  # Motivos de aparicion que cuentan como spawn "natural".
+  # Valores validos: NATURAL, SPAWNER, CHUNK_GEN, PATROL, RAID, REINFORCEMENTS, VILLAGE_INVASION...
+  razones: [NATURAL]
+  # Si es true, los mobs invocados (hordas, refuerzos...) tambien reciben la vida de mobs.yml.
+  invocados-escalan-vida: false
+
+# Presion ambiental: multiplica el DANO segun donde estes.
+entorno:
+  distancia:
+    por-bloques: 500      # cada X bloques del spawn...
+    max-tramos: 8         # ...hasta este numero de tramos
+    dano: 0.04            # ...suma este valor al multiplicador
+  profundidad:
+    y-base: 64            # por debajo de esta Y empieza a subir
+    por-bloques: 10       # cada X bloques bajo y-base...
+    dano: 0.03            # ...suma este valor
+    tope: 0.4             # maximo que puede sumar la profundidad
+  # Bonus fijo por dimension (World.Environment). Si una dimension esta aqui,
+  # NO se usan distancia ni profundidad en ella.
+  dimensiones:
+    NETHER: 0.2
+    THE_END: 0.3
+  # Bonus por llevar estas piezas de armadura (se suman).
+  armadura:
+    NETHERITE_CHESTPLATE: 0.1
+    DIAMOND_CHESTPLATE: 0.05
+  maximo: 1.9             # tope del multiplicador de entorno (antes de aplicar el nivel)
+
+# Elites
+elite:
+  xp: 12                  # xp extra al matar un elite
+  efectos:                # efecto:nivel  (duracion infinita)
+    - "regeneration:1"
+    - "resistance:1"
+  efecto-fuerza: "strength:1"   # se anade si el mob tiene "fuerza: true" en mobs.yml
+  ocultar-particulas: false
+  brillo: false           # true = los elites brillan
+  nombre: ""              # ej. "&c&lElite" (vacio = sin nombre)
+  venganza:
+    prob: 35              # % de que al morir invoque secuaces
+    cantidad: 2
+
+# Equipo aleatorio de los mobs de combate (zombis, esqueletos...).
+# Se tira un dado 1-100 y se suman las "prob" en orden.
+equipo:
+  drop-chance: 0.085      # probabilidad de soltar el equipo (-1 = no tocar)
+  armaduras:
+    - { prob: 20, casco: LEATHER_HELMET, pechera: LEATHER_CHESTPLATE }
+    - { prob: 14, casco: CHAINMAIL_HELMET, pechera: CHAINMAIL_CHESTPLATE }
+    - { prob: 8, casco: IRON_HELMET, pechera: IRON_CHESTPLATE, botas: IRON_BOOTS }
+  cuerpo:                 # armas para mobs con "equipo: cuerpo"
+    - { prob: 15, mano: IRON_SWORD }
+    - { prob: 20, mano: STONE_SWORD }
+  arco:                   # armas para mobs con "equipo: arco" (formato ITEM;encanto=nivel)
+    - { prob: 15, mano: "BOW;power=2" }
+    - { prob: 20, mano: "BOW;power=1" }
+
+# Hordas nocturnas (solo Overworld)
+horda:
+  activa: true
+  cada-minutos: 6
+  prob: 35
+  tiempo-inicio: 12000    # ticks del dia (12000 = 18:00)
+  tiempo-fin: 23000       # (23000 = 05:00)
+  y-minima: 50
+  radio: 20
+  distancia-minima: 8
+  cantidad-min: 3
+  cantidad-max: 5
+  ignorar-modos: [CREATIVE, SPECTATOR]
+  solo-cielo-abierto: false
+  mobs:                   # tipo: peso
+    zombie: 60
+    skeleton: 40
+
+# Pesadilla al dormir
+cama:
+  activa: true
+  prob: 25
+  radio: 6
+  distancia-minima: 2
+  cantidad: 2
+  mobs:
+    zombie: 100
+
+# Ghasts: bolas de fuego con explosion mayor
+ghast:
+  activo: true
+  radio-explosion: 2.0    # base (se escala con el nivel). Vanilla = 1.0
+  solo-ghast: true        # false = tambien bolas de fuego de otros tiradores
+
+# Telaranas puestas por arañas (accion "telarana" en mobs.yml)
+telarana:
+  al-romper:
+    prob: 35
+    acciones:
+      - "invocar:cave_spider:1"
+      - "mensaje:&8» &2Algo salió de la telaraña &8«"
+
+medidor:
+  retraso-ticks: 40       # el medidor sale con retraso para no tapar los avisos
+
+autoguardado-minutos: 5

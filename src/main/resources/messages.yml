@@ -1,0 +1,43 @@
+# Textos del plugin. Colores con & (ej. &c). Placeholders entre %...%
+prefijo: "&8» &7"
+
+sin-permiso: "&cNo tienes permiso para usar este comando."
+solo-jugadores: "&cSolo se puede usar dentro del juego."
+recargado: "&aConfiguración recargada: &f%mobs% &amobs."
+error-recarga: "&cError al recargar: &f%error%"
+
+nivel-actual: "&8» &7Nivel actual: &f%nivel% &8(&7x%factor%&8)"
+nivel-cambiado: "&8» &7Dificultad cambiada a &f%nivel% &8(&7x%factor%&8)"
+nivel-invalido: "&cNiveles disponibles: &f%niveles%"
+
+estado-vida: "&8» &7Vida de mobs: &fx%valor%"
+estado-vida-elite: "&8» &7Vida de élites: &fx%valor%"
+estado-dano: "&8» &7Daño de mobs: &fx%valor%"
+estado-dano-elite: "&8» &7Daño de élites: &fx%valor%"
+estado-prob: "&8» &7%nombre%: &f%valor%%%"
+estado-entorno: "&8» &7Entorno aquí: &fx%valor%"
+
+probar-zombi: "&8» &7Zombi de prueba: vida &f%vida%"
+probar-elite: "&8» &7Zombi élite de prueba: vida &f%vida%"
+probar-fallo: "&cNo se pudo invocar el zombi de prueba."
+
+debug-on: "&8» &7Debug activado: verás el daño de cada golpe de mob"
+debug-off: "&8» &7Debug desactivado"
+debug-linea: "&8[&7debug&8] &f%mob% &7· tipo &f%tipo% &7· golpe &f%golpe% &7· entorno x%entorno% &7· daño mob x%mult%"
+
+medidor-on: "&8» &7Medidor activado: verás tu nivel y el daño de cada golpe de mob"
+medidor-on-ayuda: "&8» &7Usa &f/medidor ahora &7para ver tus multiplicadores en el chat"
+medidor-off: "&8» &7Medidor desactivado"
+medidor-ahora-nivel: "&8» &7Nivel: &f%nivel% &8(&7x%factor%&8)"
+medidor-ahora-entorno: "&8» &7Entorno aquí: &fx%valor%"
+medidor-ahora-dano: "&8» &7Daño de mobs: &fx%valor%"
+medidor-barra: "&8» &7Nivel &f%nivel% &8· &7Entorno &fx%entorno% &8· &7Daño &fx%mult% &8· &7Golpe &f%golpe% &8«"
+
+ayuda:
+  - "&8» &7Uso: &f/pesadilla nivel <%niveles%>"
+  - "&8» &7Otros: &festado&7, &fprobar [elite]&7, &fdebug&7, &frecargar"
+  - "&8» &7Nivel actual: &f%nivel% &8(&7x%factor%&8)"
+
+horda-aviso: "&8» &4Algo se acerca en la oscuridad &8«"
+cama-aviso: "&8» &7Un mal sueño te sacude &8«"
+

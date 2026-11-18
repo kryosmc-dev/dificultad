@@ -1,0 +1,20 @@
+name: Pesadilla
+version: '${project.version}'
+main: dev.pesadilla.PesadillaPlugin
+api-version: '1.21'
+description: Modo Pesadilla - dificultad extrema y habilidades de mobs
+commands:
+  pesadilla:
+    description: Administracion del Modo Pesadilla
+    usage: /pesadilla <nivel|estado|probar|debug|recargar>
+    aliases: [pesa]
+  medidor:
+    description: Medidor de dano de mobs
+    usage: /medidor [ahora]
+permissions:
+  pesadilla.admin:
+    description: Administrar el Modo Pesadilla
+    default: op
+  pesadilla.medidor:
+    description: Usar el medidor de dano
+    default: true

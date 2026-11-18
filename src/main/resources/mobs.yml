@@ -1,0 +1,419 @@
+# =====================================================================
+#  MOBS Y HABILIDADES - mobs.yml
+#  Aqui se define TODO lo que hace cada mob. Recarga: /pesadilla recargar
+#
+#  Claves de cada mob (id de Minecraft en minusculas: zombie, cave_spider...):
+#    vida:      true = usa base.vida | numero = multiplicador propio | false = no tocar
+#    dano:      true = usa base.dano | numero = multiplicador propio | false = no tocar
+#    entorno:   true/false = aplica la presion ambiental al dano (por defecto: igual que "dano")
+#    elite:     { prob: %, fuerza: true/false }   (solo apariciones naturales)
+#    equipo:    cuerpo | arco | ninguno           (equipo aleatorio de config.yml)
+#    cargado:   % de aparecer cargado (solo creeper)
+#    subterraneo: { y: 0, radio-extra: 1.0 }      (solo creeper: explosion mayor bajo esa Y)
+#    grupo:     { prob: %, cantidad: N }          (aparece acompanado de copias)
+#    al-aparecer / al-golpear / al-morir: listas de habilidades
+#
+#  Cada habilidad:
+#    id:          nombre unico dentro del mob (se usa para el cooldown)
+#    prob:        % de activarse (por defecto 100). Se escala con el nivel.
+#    escalar-prob: false = la prob NO se escala con el nivel
+#    cooldown:    segundos entre activaciones (por jugador)
+#    proyectil:   true = solo golpes de proyectil | false = solo cuerpo a cuerpo
+#    solo-tipo:   elite | cargado | invocado | ninguno
+#    excepto-tipo: igual que solo-tipo pero al reves
+#    acciones:    lista de acciones (abajo)
+#
+#  ACCIONES (formato "tipo:arg:arg"; niveles de efecto empiezan en 1):
+#    efecto:<efecto>:<nivel>:<segundos>        efecto al jugador
+#    efecto-mob:<efecto>:<nivel>:<segundos>    efecto al propio mob
+#    dano:<multiplicador>                      multiplica el golpe (se escala con el nivel)
+#    lanzar:<fuerza>                           lanza al jugador hacia arriba
+#    empujar:<fuerza>                          empuja al jugador lejos del mob
+#    incendiar:<segundos>
+#    robo-vida:<fraccion>                      el mob se cura esa fraccion del dano
+#    mensaje:<texto>                           action bar al jugador
+#    titulo:<titulo>|<subtitulo>
+#    sonido:<sonido>[:volumen:tono]
+#    invocar:<mob>:<cantidad>[:<preset>]       invoca mobs en la zona (presets al final)
+#    telarana:<segundos>                       pone una telarana (si no puede, corta la habilidad)
+#    tnt:<mecha_ticks>[:<potencia>]
+#    rayo:[efecto|real]
+#    comando:<comando>                         consola; %player% = jugador
+# =====================================================================
+
+presets:
+  refuerzo-zombi:
+    casco: IRON_HELMET
+    pechera: IRON_CHESTPLATE
+    mano: IRON_SWORD
+  zombi-renacido:
+    casco: IRON_HELMET
+    mano: IRON_SWORD
+  esqueleto-renacido:
+    mano: BOW
+    vida: 10
+
+mobs:
+  # ------------------------------ ZOMBIS ------------------------------
+  zombie:
+    vida: true
+    dano: true
+    equipo: cuerpo
+    elite: { prob: 12, fuerza: true }
+    al-golpear:
+      - id: zombi-debilidad
+        cooldown: 7
+        acciones:
+          - "efecto:hunger:2:15"
+          - "efecto:weakness:1:10"
+      - id: zombi-refuerzos
+        prob: 12
+        cooldown: 7
+        acciones:
+          - "invocar:zombie:2:refuerzo-zombi"
+          - "mensaje:&8» &cLos gemidos atrajeron refuerzos &8«"
+          - "sonido:entity.zombie.ambient"
+    al-morir:
+      - id: zombi-resucita
+        prob: 15
+        acciones:
+          - "invocar:zombie:1:zombi-renacido"
+          - "mensaje:&8» &4El zombi se levanta de nuevo &8«"
+
+  husk:
+    vida: true
+    dano: true
+    equipo: cuerpo
+    al-golpear:
+      - id: husk-sed
+        cooldown: 10
+        acciones:
+          - "efecto:hunger:2:10"
+          - "efecto:weakness:1:6"
+          - "efecto:blindness:1:2"
+
+  drowned:
+    vida: true
+    dano: true
+    al-golpear:
+      - id: ahogado-tridente
+        proyectil: true
+        acciones:
+          - "dano:1.2"
+          - "efecto:slowness:2:5"
+      - id: ahogado-garra
+        proyectil: false
+        cooldown: 10
+        acciones:
+          - "efecto:mining_fatigue:1:5"
+          - "efecto:slowness:1:3"
+
+  # ------------------------------ ARANAS ------------------------------
+  spider:
+    vida: true
+    dano: true
+    elite: { prob: 12, fuerza: true }
+    al-golpear:
+      - id: arana-mordida-fuerte
+        acciones:
+          - "dano:1.1"
+      - id: arana-debilidad
+        cooldown: 8
+        acciones:
+          - "efecto:weakness:1:5"
+      - id: arana-telarana
+        prob: 40
+        cooldown: 12
+        acciones:
+          - "telarana:6"
+          - "efecto:slowness:1:3"
+          - "mensaje:&8» &2Te atrapó una telaraña &7· rómpela con tu espada &8«"
+          - "sonido:block.cobweb.place"
+    al-morir:
+      - id: arana-cria
+        prob: 50
+        acciones:
+          - "invocar:cave_spider:1"
+          - "mensaje:&8» &2La araña soltó a una cría &8«"
+
+  cave_spider:
+    vida: true
+    dano: true
+    al-golpear:
+      - id: cueva-veneno
+        cooldown: 8
+        acciones:
+          - "efecto:poison:1:6"
+          - "efecto:weakness:1:5"
+
+  # ----------------------------- ESQUELETOS ---------------------------
+  skeleton:
+    vida: true
+    dano: true
+    equipo: arco
+    elite: { prob: 15, fuerza: false }
+    al-golpear:
+      - id: esqueleto-flecha
+        proyectil: true
+        acciones:
+          - "dano:1.3"
+          - "efecto:slowness:1:3"
+      - id: esqueleto-flecha-cegadora
+        proyectil: true
+        prob: 20
+        acciones:
+          - "efecto:blindness:1:2"
+          - "mensaje:&8» &7Una flecha te nubla la vista &8«"
+    al-morir:
+      - id: esqueleto-renace
+        prob: 25
+        acciones:
+          - "invocar:skeleton:1:esqueleto-renacido"
+          - "mensaje:&8» &7Los huesos se vuelven a unir &8«"
+
+  stray:
+    vida: true
+    dano: true
+    equipo: arco
+    al-golpear:
+      - id: vagabundo-flecha
+        proyectil: true
+        acciones:
+          - "dano:1.3"
+          - "efecto:slowness:2:5"
+      - id: vagabundo-flecha-cegadora
+        proyectil: true
+        prob: 20
+        acciones:
+          - "efecto:blindness:1:2"
+          - "mensaje:&8» &7Una flecha te nubla la vista &8«"
+
+  bogged:
+    vida: true
+    dano: true
+    equipo: arco
+    al-golpear:
+      - id: pantano-flecha
+        proyectil: true
+        acciones:
+          - "dano:1.3"
+          - "efecto:poison:1:5"
+          - "efecto:slowness:1:2"
+      - id: pantano-flecha-cegadora
+        proyectil: true
+        prob: 20
+        acciones:
+          - "efecto:blindness:1:2"
+          - "mensaje:&8» &7Una flecha te nubla la vista &8«"
+
+  wither_skeleton:
+    vida: true
+    dano: true
+    grupo: { prob: 30, cantidad: 1 }
+    al-golpear:
+      - id: wither-marchita
+        cooldown: 8
+        acciones:
+          - "efecto:wither:1:4"
+
+  # ------------------------------ CREEPERS ----------------------------
+  creeper:
+    vida: false
+    dano: false
+    cargado: 10
+    subterraneo: { y: 0, radio-extra: 1.0 }
+    al-golpear:
+      - id: creeper-descarga
+        solo-tipo: cargado
+        acciones:
+          - "efecto:blindness:1:4"
+          - "efecto:slowness:2:5"
+          - "efecto:nausea:1:8"
+          - "lanzar:0.8"
+          - "mensaje:&8» &bLa descarga te sacude &8«"
+      - id: creeper-explosion
+        excepto-tipo: cargado
+        acciones:
+          - "dano:0.85"
+          - "efecto:blindness:1:2"
+          - "efecto:nausea:1:5"
+          - "lanzar:0.6"
+    al-morir:
+      - id: creeper-trampa
+        prob: 8
+        acciones:
+          - "tnt:80"
+          - "mensaje:&8» &cUna mecha encendida, corre &8«"
+          - "sonido:entity.tnt.primed"
+
+  # ---------------------------- ENDER / OTROS -------------------------
+  enderman:
+    vida: true
+    dano: true
+    elite: { prob: 6, fuerza: false }
+    al-golpear:
+      - id: ender-oscuridad
+        cooldown: 12
+        acciones:
+          - "efecto:darkness:1:5"
+          - "sonido:entity.enderman.scream"
+      - id: ender-oscuridad-larga
+        prob: 25
+        cooldown: 12
+        acciones:
+          - "efecto:darkness:1:12"
+          - "efecto:slowness:1:4"
+      - id: ender-parasitos
+        prob: 25
+        cooldown: 12
+        acciones:
+          - "invocar:endermite:2"
+          - "mensaje:&8» &5Algo se movió entre las sombras &8«"
+
+  phantom:
+    vida: true
+    dano: true
+    al-golpear:
+      - id: fantasma-garras
+        cooldown: 15
+        acciones:
+          - "efecto:levitation:1:4"
+          - "efecto:slowness:1:3"
+          - "efecto:nausea:1:5"
+          - "mensaje:&8» &7Unas garras te alzan por los aires &8«"
+
+  silverfish:
+    vida: true
+    dano: true
+    al-golpear:
+      - id: lepisma-plaga
+        prob: 30
+        cooldown: 12
+        acciones:
+          - "invocar:silverfish:2"
+          - "mensaje:&8» &7Una plaga se desata a tu alrededor &8«"
+
+  # ------------------------------ ILLAGERS ----------------------------
+  ravager:
+    vida: false
+    dano: true
+    al-golpear:
+      - id: devastador-fuerza
+        acciones:
+          - "dano:1.15"
+      - id: devastador-arrasa
+        cooldown: 10
+        acciones:
+          - "lanzar:0.5"
+          - "efecto:slowness:1:3"
+
+  vindicator:
+    vida: true
+    dano: true
+    al-golpear:
+      - id: vindicador-fuerza
+        acciones:
+          - "dano:1.15"
+      - id: vindicador-arrasa
+        cooldown: 10
+        acciones:
+          - "lanzar:0.5"
+          - "efecto:slowness:1:3"
+      - id: vindicador-hachazo
+        prob: 35
+        acciones:
+          - "efecto:poison:1:4"
+          - "mensaje:&8» &cUn hachazo profundo &8«"
+
+  pillager:
+    vida: true
+    dano: true
+
+  witch:
+    vida: true
+    dano: true
+    elite: { prob: 15, fuerza: false }
+    al-golpear:
+      - id: bruja-maleficio
+        cooldown: 10
+        acciones:
+          - "efecto:weakness:1:10"
+          - "efecto:mining_fatigue:1:6"
+          - "mensaje:&8» &5Un maleficio te debilita &8«"
+
+  # ------------------------------- NETHER -----------------------------
+  blaze:
+    vida: true
+    dano: true
+    al-golpear:
+      - id: blaze-llamas
+        cooldown: 6
+        acciones:
+          - "incendiar:5"
+          - "efecto:weakness:1:5"
+          - "lanzar:0.4"
+
+  ghast:
+    vida: false
+    dano: true
+    al-golpear:
+      - id: ghast-fuego
+        cooldown: 10
+        acciones:
+          - "incendiar:4"
+          - "efecto:weakness:1:6"
+          - "mensaje:&8» &cEl cielo arde sobre ti &8«"
+
+  piglin_brute:
+    vida: true
+    dano: true
+    grupo: { prob: 30, cantidad: 1 }
+    al-golpear:
+      - id: brute-golpe
+        cooldown: 10
+        acciones:
+          - "efecto:slowness:1:3"
+          - "efecto:weakness:1:5"
+
+  hoglin:
+    vida: false
+    dano: true
+    al-golpear:
+      - id: hoglin-embestida
+        cooldown: 10
+        acciones:
+          - "lanzar:0.6"
+          - "efecto:slowness:1:3"
+
+  zoglin:
+    vida: false
+    dano: true
+    al-golpear:
+      - id: zoglin-embestida
+        cooldown: 10
+        acciones:
+          - "lanzar:0.6"
+          - "efecto:slowness:1:3"
+
+  # --------------------------------- END ------------------------------
+  shulker:
+    vida: false
+    dano: true
+    al-golpear:
+      - id: shulker-vacio
+        cooldown: 8
+        acciones:
+          - "efecto:weakness:1:6"
+          - "efecto:slowness:1:4"
+          - "mensaje:&8» &dEl vacío te pesa &8«"
+
+  ender_dragon:
+    vida: false
+    dano: true
+    al-golpear:
+      - id: dragon-aliento
+        cooldown: 8
+        acciones:
+          - "efecto:weakness:1:8"
+          - "efecto:slowness:1:4"
+          - "lanzar:0.6"
